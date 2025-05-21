@@ -9,9 +9,6 @@ from django.contrib.auth import authenticate,login
 def welcome(request):
     return render(request,"MyApp/welcome.html")
 
-def welcome(request):
-    return render(request,"MyApp/welcome.html")
-
 def register(request):
     if request.method == "GET":
         form = UserCreationForm()
