@@ -1,0 +1,89 @@
+1.Create a new project
+2. goto project level url and add
+path('accounts/',include('django.contrib.auth.urls')),
+3. Create a folder templates in the root directry, inside that add registration folder and inside that add login.html
+4. Inside the login page add (login.html)
+{{form}}
+---------------
+<form method="post">
+    {%csrf_token%}
+    {{form}}
+<input type="submit" value="Login"/>
+</form>
+----------------------------------------
+5. goto settings.py 
+import os
+
+look for templates section,make an entry like this
+'DIRS': [os.path.join(BASE_DIR, 'templates/')],
+-> We are configuring django to look for templates in the root directory
+
+->run the application with following url
+http://127.0.0.1:8000/accounts/login/  ->You will see login screen
+
+6. Perform 
+python manage.py makemigrations
+python manage.py migrate
+
+7. python manage.py createsuperuser
+8. Run the application, goto admin section -> user -> add user
+   ->add user
+
+9. Now goto 
+http://127.0.0.1:8000/accounts/login/
+enter the user details which we created
+We will be redirected to profile page
+
+10. Create a new App -> MyApp
+entry in project level url -
+path('',include('MyApp.urls')),
+
+urls.py of MyApp
+path('welcome', views.welcome),
+
+Create MyApp folder in templates
+ and add welcome.html page
+
+
+ Views.py
+ # Create your views here.
+def welcome(request):
+    return render(request,"MyApp/welcome.html")
+
+
+settings.py
+LOGIN_REDIRECT_URL = '/welcome'
+
+--------------Register------------------
+goto templates/registration folder
+add register.html
+<form method="post">
+    {%csrf_token%}
+
+{{form}}
+<p/>
+<input type="submit" value="Register"/>
+</form>
+
+----------------------------------------
+urls.py of MyApp
+path('register',views.register),
+
+views.py
+from django.shortcuts import render,redirect
+from django.http import HttpResponse
+
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate,login
+
+def register(request):
+    if request.method == "GET":
+        form = UserCreationForm()
+        return render(request,'registration/register.html',{"form":form})
+    else:
+        form = UserCreationForm(request.POST)
+        if(form.is_valid()):
+            form.save()
+        else:
+            return HttpResponse("Error")
+        return redirect("/")
